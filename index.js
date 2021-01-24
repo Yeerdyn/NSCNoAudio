@@ -1,6 +1,8 @@
 const  { Telegraf } = require('telegraf');
+require('dotenv').config();
+const express = require('express')
 
-const bot = new Telegraf('1588623310:AAEU4qS16CbQP74alYxWTL706MUSiQo0ncM');
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.catch((err, ctx) => {
     console.log(`Ooops, encountered an error for ${ctx.updateType}`, err)
@@ -24,5 +26,22 @@ bot.on('message', (ctx) => {
 
 bot.launch()
 
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))
+
+const app = express()
+const port = process.env.APP_PORT
+
+app.get('/', (req, res) => {
+  res.send('Alive')
+})
+
+const instanse = app.listen(port)
+
+process.once('SIGINT', () => {
+  bot.stop('SIGINT')
+  instanse.close();
+})
+
+process.once('SIGTERM', () => { 
+  bot.stop('SIGTERM')
+  instanse.close();
+})
