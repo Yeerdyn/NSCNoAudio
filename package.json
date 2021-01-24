@@ -1,0 +1,13 @@
+{
+  "name": "exp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ramda": "^0.27.1",
+    "telegraf": "^4.0.1"
+  }
+}
