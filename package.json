@@ -8,10 +8,14 @@
     "analize": "node analytics/index.js"
   },
   "dependencies": {
+    "Sentimental": "^1.0.1",
+    "cli-progress": "^3.8.2",
     "dayjs": "^1.10.4",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "natural": "^2.4.5",
     "ramda": "^0.27.1",
+    "stopwords-ru": "^0.3.0",
     "telegraf": "^4.0.1"
   }
 }
