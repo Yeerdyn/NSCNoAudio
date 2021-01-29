@@ -1,25 +1,32 @@
 const data = require('./result.json')
-const { head, last } = require('ramda')
+const { head, last, take, takeLast } = require('ramda')
+const dayjs = require('dayjs')
+const { getPeoplesByMessages, getMessagesCountByPeople, getTopByWords } = require('./functions')
 
 const messages = data.messages;
+// const messages = take(100, data.messages);
+
+const firstMessageDate = new Date(head(messages).date)
+const lastMessageDate = new Date(last(messages).date)
 
 
 console.log('chat info', data.name, data.type, data.id);
 console.log('messages', messages.length);
-console.log('oldest message at', head(messages).date);
-console.log('newest message at', last(messages).date);
-
+console.log('oldest message at', dayjs(firstMessageDate).format('DD/MM/YYYY HH:mm:ss'));
+console.log('newest message at', dayjs(lastMessageDate).format('DD/MM/YYYY HH:mm:ss'));
 
 console.log('------------------------------------------------');
 
-let peoples = {};
+let members = {};
+let messagesPerPeopleData = []
+let topByWords = []
 
-messages.filter(item => item.type === 'message').forEach(message => {
-    peoples[message.from_id] = message.from
+let justMessages = messages.filter(item => item.type === 'message')
 
-    if (!message.from_id) {
-        console.log('messages', message);
-    }
-});
+members = getPeoplesByMessages(justMessages)
+messagesPerPeopleData = getMessagesCountByPeople(justMessages)
+topByWords = getTopByWords(messages)
 
-console.log('peoples', peoples);
+console.log('members', members);
+console.log('messagesPerMembers', messagesPerPeopleData);
+console.log('topByWords', takeLast(20, topByWords));

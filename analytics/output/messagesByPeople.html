@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>pie-chart test | amCharts</title>
+		<meta name="description" content="chart created using amCharts live editor" />
+		
+		<!-- amCharts javascript sources -->
+		<script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+		<script type="text/javascript" src="https://www.amcharts.com/lib/3/pie.js"></script>
+		
+
+		<!-- amCharts javascript code -->
+		<script type="text/javascript">
+			AmCharts.makeChart("chartdiv",
+				{
+					"type": "pie",
+					"balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
+					"titleField": "name",
+					"valueField": "messages",
+					"fontSize": 12,
+					"theme": "default",
+					"allLabels": [],
+					"balloon": {},
+					"titles": [],
+					"dataProvider": [
+						{
+							"name": "Текст голосового сообщения:",
+							"messages": 1
+						},
+						{
+							"name": "Voicy",
+							"messages": 2
+						},
+						{
+							"name": "Everyone",
+							"messages": 5
+						},
+						{
+							"name": "Валера",
+							"messages": 9
+						},
+						{
+							"name": "Vitaly Pereslavtsev",
+							"messages": 34
+						},
+						{
+							"name": "Sergey",
+							"messages": 74
+						},
+						{
+							"name": "Pizdabot",
+							"messages": 79
+						},
+						{
+							"name": "Vsevolod Leonidovich🇺🇦",
+							"messages": 86
+						},
+						{
+							"name": "D Erohin",
+							"messages": 133
+						},
+						{
+							"name": "Андрей Козлов",
+							"messages": 260
+						},
+						{
+							"name": "Serge Murawski",
+							"messages": 540
+						},
+						{
+							"name": "George Samoshkin",
+							"messages": 902
+						},
+						{
+							"name": "Aleksandr Maksimov",
+							"messages": 1022
+						},
+						{
+							"name": "Alexander",
+							"messages": 1242
+						},
+						{
+							"name": "Михаил Иванников",
+							"messages": 1338
+						},
+						{
+							"name": "Enord",
+							"messages": 2994
+						},
+						{
+							"name": "Влад Филатов (NS)",
+							"messages": 4715
+						},
+						{
+							"name": "Илья NS",
+							"messages": 5106
+						},
+						{
+							"name": "Сергей Тестировщик",
+							"messages": 7644
+						}
+					]
+				}
+			);
+		</script>
+	</head>
+	<body>
+		<div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div>
+	</body>
+</html>
