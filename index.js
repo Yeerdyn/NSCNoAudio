@@ -12,7 +12,8 @@ bot.use(async (ctx, next) => {
     const start = new Date()
     await next()
     const ms = new Date() - start
-    console.log('Response time: %sms', ms)
+    const from = ctx.message.from.first_name
+    console.log('Response from: %s. Response time: %sms', from, ms)
   })
 
 bot.start((ctx) => {})
