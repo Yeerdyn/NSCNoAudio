@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "Sentimental": "^1.0.1",
+    "axios": "^0.21.1",
+    "az": "^0.2.3",
     "cli-progress": "^3.8.2",
     "dayjs": "^1.10.4",
     "dotenv": "^8.2.0",

@@ -1,8 +1,9 @@
-const { sortBy, prop, flatten, head, last, uniq } = require('ramda')
+const { sortBy, prop, flatten, head, last, uniq, take } = require('ramda')
 const cliProgress = require('cli-progress');
 const natural = require('natural')
 const wordsInBlackList = require('stopwords-ru') 
 const dayjs = require('dayjs')
+const axios = require('axios')
 const sentimentalVocab = require('./vocab.json')
 require('dayjs/locale/ru')
 
@@ -19,6 +20,22 @@ function getPeoplesByMessages(messages) {
     });
 
     return peoples
+}
+
+function debounce(f, ms) {
+
+    let isCooldown = false;
+  
+    return function() {
+      if (isCooldown) return;
+  
+      f.apply(this, arguments);
+  
+      isCooldown = true;
+  
+      setTimeout(() => isCooldown = false, ms);
+    };
+  
 }
 
 function getMessagesCountByPeople(messages) {
@@ -59,7 +76,7 @@ function normalizeMessage(text){
 
 function createCliProgressBar(processName) {
     return new cliProgress.SingleBar({
-        format: `${processName} | {bar} | {percentage}% || {value}/{total}`,
+        format: `${processName} | {bar} | {percentage}% || {value}/{total} | {value/duration} |{duration_formatted}`,
         barCompleteChar: '\u2588',
         barIncompleteChar: '\u2591',
         hideCursor: true
@@ -260,6 +277,35 @@ function getTonByMessage(message) {
     }
 }
 
+async function getSentimentalAnalize(message) {
+    let defaultAnalize = {
+        "social":{
+            "negative":0,
+            "neutral":0
+        },
+        "toxic":{
+            "normal":0,
+            "toxic":0
+        }
+    }
+    if (typeof message.text !== "string") {
+        return defaultAnalize;
+    }
+
+    let normilizedMessage = normalizeMessage(message.text)
+
+    try {
+        let res = await axios.get(`http://64.227.126.242/sentimental?message="${encodeURI(normilizedMessage)}"`)
+        let data = await res.data
+        return data
+    } catch (err) {
+        console.log('normilizedMessage', normilizedMessage);
+        console.log('err', err)
+    }
+
+    return defaultAnalize
+}
+
 function extractMessagesText(messages) {
     let b1 = createCliProgressBar('Extract messages to raw format')
 
@@ -301,7 +347,61 @@ function extractMessagesWordsText(messages) {
 
     b1.stop();
 
-    return uniq(rawMessages)
+    let uniqueMessages = uniq(rawMessages)
+
+    return uniqueMessages
+}
+
+async function modifyMessageToAnalytic(message) {
+    let sentimental = await getSentimentalAnalize(message)
+    return {
+        ...message,
+        meta: {
+            sentimental
+        }
+    }
+}
+
+async function modifyMessagesToAnalytics(messages) {
+    let b1 = createCliProgressBar('Modify messages to analytics')
+
+    b1.start(messages.length, 0, {
+        speed: "N/A"
+    });
+
+    let messagesStack = messages
+
+    let totalMessages = []
+
+    // let counter = 0
+    // while (messagesStack.length !== 0) {
+    //     let message = messagesStack.pop()
+
+    //     b1.update(counter + 1)
+    //     counter++
+
+    //     let prep = await modifyMessageToAnalytic(message)
+
+    //     totalMessages.push(prep)
+    // }
+
+    
+    let counter = 0
+    while (messagesStack.length !== 0) {
+        let messages10 = take(20, messagesStack)
+        messagesStack = messagesStack.slice(20)
+
+        b1.update(counter + 20)
+        counter+=20
+
+        let prep = await Promise.all(messages10.map(async (message) => await modifyMessageToAnalytic(message)))
+
+        totalMessages.push(...prep)
+    }
+
+    b1.stop();
+
+    return totalMessages
 }
 
 module.exports = {
@@ -317,4 +417,6 @@ module.exports = {
     getTonByMessage,
     extractMessagesText,
     extractMessagesWordsText,
+    modifyMessageToAnalytic,
+    modifyMessagesToAnalytics,
 }
